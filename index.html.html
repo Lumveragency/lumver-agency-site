@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumver — AI Automation Agency</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Geist', 'Helvetica Neue', Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --hover: #333;
+      --rule: rgba(0,0,0,0.08);
+      --mono: 'JetBrains Mono', monospace;
+      --px: clamp(1.5rem, 5vw, 4rem);
+      --section-py: clamp(4rem, 8vw, 7rem);
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block;
+      font-family: 'Geist', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      background: var(--black);
+      color: var(--white);
+      border: 1px solid var(--black);
+      border-radius: 0;
+      cursor: pointer;
+      transition: background 0.3s, border-color 0.3s;
+      white-space: nowrap;
+      -webkit-appearance: none;
+    }
+    .btn:hover { background: var(--hover); border-color: var(--hover); }
+    .btn-block { display: block; width: 100%; text-align: center; }
+    .btn-sm { font-size: 0.7rem; padding: 0.65rem 1.25rem; }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem var(--px);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-logo {
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: 'Geist', sans-serif;
+      flex-shrink: 0;
+    }
+    .nav-logo:focus { outline: none; }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links button {
+      font-family: 'Geist', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      opacity: 0.38;
+      transition: opacity 0.2s;
+    }
+    .nav-links button:hover { opacity: 1; }
+
+    .nav-right { display: flex; align-items: center; }
+
+    /* ── HAMBURGER (mobile only) ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 1001;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--black);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── MOBILE MENU ── */
+    #mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 998;
+      background: var(--white);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2.25rem;
+      padding: 2rem;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu button {
+      font-family: 'Geist', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    #mobile-menu button:hover { opacity: 0.5; }
+    #mobile-menu .mob-contact { margin-top: 0.5rem; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 7rem var(--px) clamp(3rem, 7vw, 5rem);
+      position: relative;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.25;
+      margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+    }
+
+    .hero-h1 {
+      font-size: clamp(2.6rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 0.94;
+      letter-spacing: -0.035em;
+      max-width: 16ch;
+      margin-bottom: clamp(1.25rem, 3vw, 2.5rem);
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      font-weight: 400;
+      line-height: 1.75;
+      max-width: 44ch;
+      opacity: 0.5;
+      margin-bottom: clamp(2rem, 4vw, 3rem);
+    }
+
+    .hero-aside {
+      position: absolute;
+      right: var(--px);
+      bottom: clamp(3rem, 6vw, 5rem);
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.12;
+      writing-mode: vertical-rl;
+    }
+
+    /* ── DIVIDER ── */
+    .rule-line {
+      height: 1px;
+      background: var(--rule);
+      margin: 0 var(--px);
+    }
+
+    /* ── SECTION ── */
+    .section { padding: var(--section-py) var(--px); }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.22;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 1.25rem;
+      height: 1px;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── WHO WE ARE ── */
+    .who-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2.5rem, 6vw, 6rem);
+      align-items: start;
+    }
+
+    .who-left { position: sticky; top: 5.5rem; }
+
+    .who-headline {
+      font-size: clamp(1.8rem, 3.2vw, 2.75rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.0;
+      margin-bottom: 2.5rem;
+    }
+
+    .who-stats { border-top: 1px solid var(--rule); padding-top: 2rem; }
+
+    .stat-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stat-val {
+      font-family: var(--mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      opacity: 0.38;
+      text-align: right;
+      line-height: 1.4;
+    }
+
+    .copy-block {
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .copy-block:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .copy-file {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      opacity: 0.22;
+      margin-bottom: 0.65rem;
+    }
+
+    .copy-text {
+      font-size: clamp(0.88rem, 1.2vw, 0.97rem);
+      line-height: 1.82;
+      opacity: 0.58;
+    }
+
+    .closing-block {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    .closing-text {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .closing-text::before { content: '> '; opacity: 0.3; }
+
+    /* ── PHILOSOPHY ── */
+    .phil-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+    .phil-item {
+      padding: 2.5rem 2.5rem 2.5rem 0;
+      border-right: 1px solid var(--rule);
+    }
+    .phil-item:not(:first-child) { padding-left: 2.5rem; }
+    .phil-item:last-child { border-right: none; padding-right: 0; }
+
+    .phil-num {
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      opacity: 0.18;
+      margin-bottom: 1.5rem;
+    }
+
+    .phil-title {
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.8rem;
+    }
+
+    .phil-body { font-size: 0.86rem; line-height: 1.78; opacity: 0.46; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      max-width: 820px;
+    }
+
+    .plan {
+      padding: clamp(1.75rem, 3vw, 2.75rem);
+      border: 1px solid var(--rule);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .plan.flagship { border-color: var(--black); }
+
+    .plan-badge {
+      position: absolute;
+      top: -1px; left: 2.5rem;
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+    }
+
+    .plan-tier {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.28;
+      margin-bottom: 0.85rem;
+      margin-top: 0.2rem;
+    }
+
+    .plan-price {
+      font-size: clamp(2.5rem, 4vw, 3.25rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+
+    .plan-period {
+      font-size: 0.7rem;
+      opacity: 0.32;
+      margin-bottom: 2rem;
+      letter-spacing: 0.04em;
+    }
+
+    .plan-features { list-style: none; margin-bottom: 1.75rem; flex: 1; }
+
+    .plan-features li {
+      font-size: 0.83rem;
+      font-weight: 500;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .plan-features li:first-child { border-top: 1px solid var(--rule); }
+    .plan-features li::before {
+      content: '';
+      width: 3px; height: 3px;
+      background: var(--black);
+      border-radius: 50%;
+      flex-shrink: 0;
+      opacity: 0.3;
+    }
+
+    .plan-best {
+      font-size: 0.7rem;
+      opacity: 0.36;
+      line-height: 1.55;
+      margin-bottom: 1.75rem;
+      font-style: italic;
+    }
+
+    /* ── PROCESS ── */
+    .process-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+    .step {
+      padding: 2.5rem 2.5rem 2.5rem 0;
+      border-right: 1px solid var(--rule);
+    }
+    .step:not(:first-child) { padding-left: 2.5rem; }
+    .step:last-child { border-right: none; padding-right: 0; }
+
+    .step-index {
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 1;
+      opacity: 0.05;
+      margin-bottom: 0.85rem;
+    }
+
+    .step-name {
+      font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.65rem;
+    }
+
+    .step-body { font-size: 0.86rem; line-height: 1.75; opacity: 0.44; }
+
+    /* ── FOOTER ── */
+    #footer {
+      padding: 3rem var(--px);
+      border-top: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .f-logo {
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+
+    .f-copy { font-size: 0.66rem; opacity: 0.26; letter-spacing: 0.04em; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fu { opacity:0; animation: fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .d1 { animation-delay:0.05s; }
+    .d2 { animation-delay:0.18s; }
+    .d3 { animation-delay:0.32s; }
+    .d4 { animation-delay:0.46s; }
+
+    /* ══════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════ */
+    @media (max-width: 700px) {
+      .nav-links, .nav-right { display: none; }
+      .hamburger { display: flex; }
+      .hero-aside { display: none; }
+
+      .who-grid,
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .who-left { position: static; }
+
+      .phil-grid,
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phil-item,
+      .step {
+        border-right: none !important;
+        border-bottom: 1px solid var(--rule);
+        padding: 2rem 0 !important;
+      }
+
+      .phil-item:last-child,
+      .step:last-child { border-bottom: none; }
+
+      #footer {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        text-align: center;
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <button class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">LUMVER</button>
+
+    <ul class="nav-links">
+      <li><button onclick="go('who')">Who We Are</button></li>
+      <li><button onclick="go('philosophy')">Philosophy</button></li>
+      <li><button onclick="go('pricing')">Plans</button></li>
+      <li><button onclick="go('process')">Process</button></li>
+    </ul>
+
+    <div class="nav-right">
+      <a href="https://tally.so/r/7RZ8V9" target="_blank" rel="noopener" class="btn btn-sm">Contact</a>
+    </div>
+
+    <button class="hamburger" id="ham" aria-label="Open menu" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE FULL-SCREEN MENU -->
+  <div id="mobile-menu">
+    <button onclick="go('who');        closeMenu()">Who We Are</button>
+    <button onclick="go('philosophy'); closeMenu()">Philosophy</button>
+    <button onclick="go('pricing');    closeMenu()">Plans</button>
+    <button onclick="go('process');    closeMenu()">Process</button>
+    <a href="https://tally.so/r/7RZ8V9" target="_blank" rel="noopener" class="btn mob-contact" onclick="closeMenu()">Contact</a>
+  </div>
+
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="hero-tag fu d1">AI Automation Agency — Est. 2026</p>
+    <h1 class="hero-h1 fu d2">Systems that think.<br>Businesses that grow.</h1>
+    <p class="hero-sub fu d3">Lumver designs autonomous lead systems for high-performance brands. We replace manual admin with AI that replies, tracks, and alerts you in real-time.</p>
+    <div class="hero-actions fu d4">
+      <button class="btn" onclick="go('pricing')">Get Started</button>
+    </div>
+    <span class="hero-aside">Lumver · AI · Automation · 2026</span>
+  </section>
+
+  <div class="rule-line"></div>
+
+  <!-- WHO WE ARE -->
+  <section class="section" id="who">
+    <p class="section-label">Who We Are</p>
+    <div class="who-grid">
+      <div class="who-left">
+        <h2 class="who-headline">The Lumver<br>Architecture.</h2>
+        <div class="who-stats">
+          <div class="stat-row">
+            <span class="stat-val">0ms</span>
+            <span class="stat-label">Target response latency</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-val">24/7</span>
+            <span class="stat-label">Autonomous system uptime</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-val">∞</span>
+            <span class="stat-label">Scale without headcount</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="copy-block">
+          <p class="copy-file">// init_context.md</p>
+          <p class="copy-text">Efficiency is the only competitive advantage that scales. Most businesses are bottlenecked by manual workflows that shouldn't exist in 2026.</p>
+        </div>
+        <div class="copy-block">
+          <p class="copy-file">// core_function.md</p>
+          <p class="copy-text">Lumver is an automation studio that architects high-performance AI ecosystems. We eliminate the friction between lead generation and revenue by building autonomous systems that think, react, and scale in real-time.</p>
+        </div>
+        <div class="copy-block">
+          <p class="copy-file">// methodology.md</p>
+          <p class="copy-text">We don't just 'connect apps.' We engineer the digital nervous system of your business — handling the logic, the data, and the communication, so you can focus on the vision.</p>
+        </div>
+        <div class="closing-block">
+          <p class="closing-text">Modern problems require autonomous solutions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-line"></div>
+
+  <!-- PHILOSOPHY -->
+  <section class="section" id="philosophy">
+    <p class="section-label">The Philosophy</p>
+    <div class="phil-grid">
+      <div class="phil-item">
+        <p class="phil-num">01</p>
+        <h3 class="phil-title">Speed</h3>
+        <p class="phil-body">0-second response times. Never let a lead go cold again. Your system moves the moment a prospect does.</p>
+      </div>
+      <div class="phil-item">
+        <p class="phil-num">02</p>
+        <h3 class="phil-title">Intelligence</h3>
+        <p class="phil-body">AI that understands your brand voice and handles the first touch — so every reply feels personal, not automated.</p>
+      </div>
+      <div class="phil-item">
+        <p class="phil-num">03</p>
+        <h3 class="phil-title">Visibility</h3>
+        <p class="phil-body">Real-time data sync to your sheets and instant alerts to your phone. You always know exactly what's happening.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-line"></div>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing">
+    <p class="section-label">The Plans</p>
+    <div class="pricing-grid">
+      <div class="plan">
+        <p class="plan-tier">The Foundation</p>
+        <div class="plan-price">$129</div>
+        <p class="plan-period">per month</p>
+        <ul class="plan-features">
+          <li>Custom Branded Lead Capture</li>
+          <li>Automated Database Sync (Google Sheets)</li>
+          <li>24/7 System Monitoring</li>
+          <li>Email Support</li>
+        </ul>
+        <p class="plan-best">Best for: Businesses getting started with automation.</p>
+        <a href="https://tally.so/r/7RZ8V9?plan=Foundation" target="_blank" rel="noopener" class="btn btn-block">Select Plan</a>
+      </div>
+      <div class="plan flagship">
+        <div class="plan-badge">Flagship</div>
+        <p class="plan-tier">The Autonomous Suite</p>
+        <div class="plan-price">$199</div>
+        <p class="plan-period">per month</p>
+        <ul class="plan-features">
+          <li>Everything in Foundation</li>
+          <li>OpenAI Integration — AI Personalised Replies</li>
+          <li>Instant Owner Alerts (Telegram / WhatsApp)</li>
+          <li>Monthly Prompt Optimisation</li>
+        </ul>
+        <p class="plan-best">Best for: Businesses ready to scale without hiring.</p>
+        <a href="https://tally.so/r/7RZ8V9?plan=Autonomous%20Suite" target="_blank" rel="noopener" class="btn btn-block">Select Plan</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-line"></div>
+
+  <!-- PROCESS -->
+  <section class="section" id="process">
+    <p class="section-label">The Process</p>
+    <div class="process-grid">
+      <div class="step">
+        <div class="step-index">1</div>
+        <h3 class="step-name">Consult</h3>
+        <p class="step-body">We map your workflow, identify every friction point, and define exactly what your autonomous system needs to do.</p>
+      </div>
+      <div class="step">
+        <div class="step-index">2</div>
+        <h3 class="step-name">Architect</h3>
+        <p class="step-body">Your system is designed from scratch — no templates, no shortcuts. Built around your brand, your voice, your leads.</p>
+      </div>
+      <div class="step">
+        <div class="step-index">3</div>
+        <h3 class="step-name">Automate</h3>
+        <p class="step-body">We deploy, test, and hand over a live system. Real-time alerts, clean data, zero manual follow-up.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule-line"></div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <span class="f-logo">LUMVER</span>
+    <span class="f-copy">© 2026 Lumver. All rights reserved.</span>
+  </footer>
+
+  <script>
+    function go(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const ham  = document.getElementById('ham');
+      const open = menu.classList.toggle('open');
+      ham.classList.toggle('open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+      document.getElementById('mobile-menu').classList.remove('open');
+      document.getElementById('ham').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  </script>
+
+</body>
+</html>
